@@ -34,17 +34,22 @@ jobs:
         NEW_VERSION: ${{ steps.version.outputs.version }}
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-        echo "Nueva version: $NEW_VERSION!!!"
+        
 
-    # - name: Build Docker Image
-    #   run: |
-    #     docker build -t 12ogelio/graphql-actions:1.0.1 .
-    #     docker build -t 12ogelio/graphql-actions:latest .
+    - name: Build Docker Image
+      env:
+        NEW_VERSION: ${{ steps.version.outputs.version }}
+      run: |
+        docker build -t 12ogelio/graphql-actions:$NEW_VERSION . 
+        # incrementa el versionamiento
+        docker build -t 12ogelio/graphql-actions:latest .
     
-    # - name: Push Docker Image
-    #   run: |
-    #     docker push 12ogelio/graphql-actions:1.0.1
-    #     docker push 12ogelio/graphql-actions:latest
+    - name: Push Docker Image
+      env:
+        NEW_VERSION: ${{ steps.version.outputs.version }}
+      run: |
+        docker push 12ogelio/graphql-actions:$NEW_VERSION
+        docker push 12ogelio/graphql-actions:latest
       
-    # - name: Build the Docker image
-    #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
